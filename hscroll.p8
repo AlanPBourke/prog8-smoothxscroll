@@ -39,11 +39,15 @@ irq {
     const ubyte map_height = 17
     const uword map_width = 512
     ubyte current_screen = 0;
-    const uword map_base = $5000
+    ;uword map_ptr = &UridiumMap
+    uword from_screen = 0
+    uword to_screen = 0
+  
     byte scroll = 7
     ubyte startline = 0
     ubyte numlines = 0
     ubyte row = 0
+    ubyte i = 1
 
     sub setscreenlocation() {
 
@@ -62,28 +66,53 @@ irq {
 
     sub copy_and_shift() {
 
-        &uword from_screen = screen_base
-        &uword to_screen = screen_backbuffer_base
+
+        ;uword from_ptr = &screen_base
+        ;uword map_ptr = screen_base
+        uword offset = 0
+        
+        if current_screen == 0 {
+            from_screen = screen_base
+            to_screen = screen_backbuffer_base
+        }
+        else {
+            from_screen = screen_backbuffer_base
+            to_screen = screen_base
+        }
+
+        offset = (startline * 40)
+        row = 0
+%breakpoint
+
+        while row < numlines {
+            sys.memcopy(@(from_screen + offset + 1), @(to_screen), 39)
+            offset += 40
+            row += 1
+        }
+
+
+    }
+
+    sub swap_screens() {
+
+        if current_screen == 1 {
+            to_screen = screen_backbuffer_base
+        }
+        else {
+            to_screen = screen_base
+        }
+
+        ;map_ptr = &to_screen + (4 * 40)
+
+
+    }
+
+    sub drawcolumn39frommap () {
 
         if current_screen == 1 {
             from_screen = screen_backbuffer_base
             to_screen = screen_base
         }
-
-        from_screen += 1 + (startline * 40)
-        to_screen = (startline * 40)
-
-        row = 0
-        while row < numlines {
-            sys.memcopy(from_screen, to_screen, 39)
-            from_screen += 40
-            to_screen += 40
-            row += 1
-        }
-    }
-
-    sub swap_screens() {
-        ; drawcom39
 
     }
 
@@ -92,7 +121,7 @@ irq {
         scroll -= 1
 
         if scroll<0 {
-            swap_screens()
+            ;swap_screens()
             goto irqdone
         }
 
@@ -101,13 +130,13 @@ irq {
         if scroll == 4 {
             startline = 4
             numlines = 3
-            ; copy_and_shift;
+            copy_and_shift();
         }
 
         if scroll == 2 {
             startline = 12
             numlines = 9
-            ; copy_and_shift;
+            ;copy_and_shift();
         }
 
         irqdone:
