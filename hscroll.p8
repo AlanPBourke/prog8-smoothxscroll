@@ -7,11 +7,6 @@
 ; Note: VICE monitor io d000
 
 main {
-    
-    
-    const uword screen_base             = $3000
-    const uword screen_backbuffer_base  = $3400  
-    const uword char_base               = $2000      
 
     sub start() {
 
@@ -23,8 +18,8 @@ main {
         c64.VMCSB = c64.VMCSB & %11110001 | %00001000
 
         sys.set_irqd()
-        sys.memset(char_base, 8*256, 0)     ; clear charset data
-c64.EXTCOL = 1
+        sys.memset($2000, 8*256, 0)     ; clear charset data
+
         c64.SCROLX &= %11110111     ; 38 column mode
 
         sys.set_rasterirq(&irq.irqhandler, 245, false)
@@ -37,6 +32,9 @@ c64.EXTCOL = 1
 
 irq {
 
+    const uword screen_base             = $3000
+    const uword screen_backbuffer_base  = $3400  
+    const uword char_base               = $2000      
     const ubyte start_colorcopy_line = 65;
     const ubyte map_height = 17
     const uword map_width = 512
@@ -64,12 +62,12 @@ irq {
 
     sub copy_and_shift() {
 
-        &uword from_screen = main.screen_base
-        &uword to_screen = main.screen_backbuffer_base
+        &uword from_screen = screen_base
+        &uword to_screen = screen_backbuffer_base
 
         if current_screen == 1 {
-            from_screen = main.screen_backbuffer_base
-            to_screen = main.screen_base
+            from_screen = screen_backbuffer_base
+            to_screen = screen_base
         }
 
         from_screen += 1 + (startline * 40)
@@ -95,11 +93,9 @@ irq {
 
         if scroll<0 {
             ;swap_screens()
-            c64.EXTCOL = 0
             goto irqdone
         }
 
-        c64.EXTCOL = 1
         c64.SCROLX &= scroll        ; Setting 3 lsbs'
         
         if scroll == 4 {
@@ -115,7 +111,7 @@ irq {
         }
 
         irqdone:
-            c64.EXTCOL = 3
+            c64.EXTCOL = 10
     }
 
     uridium_chars: %asmbinary "UridiumChars.bin"
