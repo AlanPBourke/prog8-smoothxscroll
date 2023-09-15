@@ -92,7 +92,7 @@ irq {
         scroll -= 1
 
         if scroll<0 {
-            ;swap_screens()
+            swap_screens()
             goto irqdone
         }
 
@@ -111,7 +111,7 @@ irq {
         }
 
         irqdone:
-            c64.EXTCOL = 10
+           
     }
 
     uridium_chars: %asmbinary "UridiumChars.bin"
