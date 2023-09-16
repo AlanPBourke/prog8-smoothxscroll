@@ -10,6 +10,7 @@ main {
 
     sub start() {
 
+        ;sys.set_irqd()
 
         ; Screen at $3000
         c64.VMCSB = c64.VMCSB & %00001111 | %11000000
@@ -17,16 +18,25 @@ main {
         ; chars =  %xxxx100x -> charmem is at $2000
         c64.VMCSB = c64.VMCSB & %11110001 | %00001000
 
-        sys.set_irqd()
-        sys.memset($2000, 8*256, 0)     ; clear charset data
 
-        c64.SCROLX &= %11110111     ; 38 column mode
+        sys.memset($2000, 8*256, 0)     ; clear charset data
+  
+        ubyte chaaa = 21
+        sys.memset($3000, 1000, chaaa)     ; TEST 
+        chaaa++
+        sys.memset($3400, 1000, chaaa)     ; TEST
+
+
+       ; c64.SCROLX &= %11110111     ; 38 column mode
 
         sys.set_rasterirq(&irq.irqhandler, 245, false)
+
+        ;fill_screen($3000, 0 as ubyte)
 
         repeat {}
 
     }
+
 }
 
 
@@ -66,11 +76,10 @@ irq {
 
     sub copy_and_shift() {
 
-
         ;uword from_ptr = &screen_base
         ;uword map_ptr = screen_base
         uword offset = 0
-        
+
         if current_screen == 0 {
             from_screen = screen_base
             to_screen = screen_backbuffer_base
@@ -82,15 +91,16 @@ irq {
 
         offset = (startline * 40)
         row = 0
-%breakpoint
+
 
         while row < numlines {
-            sys.memcopy(@(from_screen + offset + 1), @(to_screen), 39)
+            ;sys.memcopy(@(from_screen + offset + 1), @(to_screen), 39)
+            sys.memcopy(from_screen + offset + 1, to_screen, 39)
             offset += 40
             row += 1
         }
 
-
+        c64.EXTCOL = 2
     }
 
     sub swap_screens() {
@@ -117,7 +127,7 @@ irq {
     }
 
     sub irqhandler() {
-
+%breakpoint
         scroll -= 1
 
         if scroll<0 {
@@ -126,17 +136,19 @@ irq {
         }
 
         c64.SCROLX &= scroll        ; Setting 3 lsbs'
-        
+
+ 
         if scroll == 4 {
+
             startline = 4
-            numlines = 3
+            numlines = 8
             copy_and_shift();
         }
 
         if scroll == 2 {
             startline = 12
             numlines = 9
-            ;copy_and_shift();
+            copy_and_shift();
         }
 
         irqdone:
