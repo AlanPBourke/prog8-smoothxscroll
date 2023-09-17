@@ -58,6 +58,9 @@ irq {
     ubyte numlines = 0
     ubyte row = 0
     ubyte i = 1
+    uword map_column = 1
+    uword offset = 0   
+    uword map_base = &uridium_map
 
     sub setscreenlocation() {
 
@@ -76,7 +79,7 @@ irq {
 
     sub copy_and_shift() {
 
-        uword offset = 0
+
 
         if current_screen == 0 {
             from_screen = screen_base
@@ -99,39 +102,46 @@ irq {
 
     sub swap_screens() {
 
-        if current_screen == 1 {
-            to_screen = screen_backbuffer_base
-        }
-        else {
-            to_screen = screen_base
-        }
-
-        ;map_ptr = &to_screen + (4 * 40)
-
+        drawcolumn39frommap()
+        scroll = 7
+        c64.SCROLX &= scroll 
+        current_screen = (current_screen + 1) & 1
+        setscreenlocation()
 
     }
 
     sub drawcolumn39frommap () {
 
+%breakpoint
+        to_screen = screen_backbuffer_base
+
+        ; Drawing on 'other' screen, i.e. what VIC is not pointing at.
         if current_screen == 1 {
-            from_screen = screen_backbuffer_base
             to_screen = screen_base
         }
+
+        offset = 4 * 40
+        map_base += map_column
+
+        for i in 0 to 17 {
+            @(to_screen + offset + 39) = @(map_base)
+            offset += 40
+            map_base += map_width
+        }
+
 
     }
 
     sub irqhandler() {
 
         scroll -= 1
-        
 
         if scroll<0 {
-            ;swap_screens()
+            swap_screens()
             return
         }
 
         c64.SCROLX &= scroll        ; Setting 3 lsbs'
-
  
         if scroll == 4 {
 
