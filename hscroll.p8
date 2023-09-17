@@ -75,9 +75,7 @@ irq {
 
 
     sub copy_and_shift() {
-%breakpoint
-        ;uword from_ptr = &screen_base
-        ;uword map_ptr = screen_base
+
         uword offset = 0
 
         if current_screen == 0 {
@@ -88,19 +86,15 @@ irq {
             from_screen = screen_backbuffer_base
             to_screen = screen_base
         }
-
-        offset = (startline * 40)
+              
+        offset = startline * 40
         row = 0
-
-
         while row < numlines {
-            ;sys.memcopy(@(from_screen + offset + 1), @(to_screen), 39)
-            sys.memcopy(from_screen + offset + 1, to_screen, 39)
+            sys.memcopy(from_screen + 1 + offset, to_screen + offset, 39)
             offset += 40
-            row += 1
+            row++
         }
 
-        
     }
 
     sub swap_screens() {
