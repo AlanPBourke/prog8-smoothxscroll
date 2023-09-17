@@ -22,9 +22,9 @@ main {
         sys.memset($2000, 8*256, 0)     ; clear charset data
   
         ubyte chaaa = 21
-        sys.memset($3c00, 1000, chaaa)     ; TEST 
+        sys.memset($3800, 1000, chaaa)     ; TEST 
         chaaa++
-        sys.memset($3800, 1000, chaaa)     ; TEST
+        sys.memset($3c00, 1000, chaaa)     ; TEST
 
 
        ; c64.SCROLX &= %11110111     ; 38 column mode
@@ -75,7 +75,7 @@ irq {
 
 
     sub copy_and_shift() {
-
+%breakpoint
         ;uword from_ptr = &screen_base
         ;uword map_ptr = screen_base
         uword offset = 0
@@ -140,14 +140,14 @@ irq {
 
  
         if scroll == 4 {
-c64.EXTCOL = 4
+
             startline = 4
             numlines = 8
             copy_and_shift();
         }
 
         if scroll == 2 {
-        c64.EXTCOL = 2
+
             startline = 12
             numlines = 9
             copy_and_shift();

@@ -1,7 +1,7 @@
 
 ; 64tass Turbo Assembler Macro V1.59.3120 listing file
 ; 64tass --ascii --case-sensitive --long-branch -Wall --dump-labels --vice-labels --labels=hscroll.vice-mon-list --no-monitor -Wno-shadow --list=hscroll.list --cbm-prg --output hscroll.prg hscroll.asm
-; Sun Sep 17 11:36:37 2023
+; Sun Sep 17 11:39:52 2023
 
 ;Offset	;Hex		;Source
 
@@ -189,6 +189,7 @@
 .092b			p8_prog8_label_3_afterwhile
 .092b	60			rts
 .092c			p8_irqhandler
+.092c			_prog8_breakpoint_1
 .092c	c6 f9			dec  p8_irq.p8_scroll
 .092e	a5 f9			lda  p8_irq.p8_scroll
 .0930	10 01			bpl  prog8_label_asm_3_if_end
