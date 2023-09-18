@@ -1,6 +1,8 @@
 ; https://bitwisecmd.com/
 ; $D018  (c64.VMCSB see https://github.com/irmen/prog8/blob/master/compiler/res/prog8lib/c64/syslib.p8)
 ; https://codebase64.org/doku.php?id=base:vicii_memory_organizing
+;https://www.pagetable.com/c64ref/c64mem/
+;https://codebase64.org/doku.php?id=base:built_in_screen_modes
 ;%import syslib
 ;%import textio
 
@@ -10,6 +12,8 @@ main {
 
     sub start() {
 
+        uword charset_base = &uridium_chars
+
         ;sys.set_irqd()
 
         ; Screen at $3800
@@ -18,9 +22,13 @@ main {
         ; chars =  %xxxx100x -> charmem is at $2000
         c64.VMCSB = c64.VMCSB & %11110001 | %00001000
 
-
-        sys.memset($2000, 8*256, 0)     ; clear charset data
-        sys.memcopy(uridium_chars, $2000, 8*256) 
+        ; Multicolour text mode
+        @($d021) = 0
+        @($d022) = 1
+        @($d023) = 7
+        ;sys.memset($2000, 8*256, 0)     ; clear charset data
+        
+        ;sys.memcopy(uridium_chars, $2000, 8*256) 
         ;ubyte chaaa = 21
        ; sys.memset($3800, 1000, chaaa)     ; TEST 
         ;chaaa++
@@ -112,7 +120,6 @@ irq {
 
     sub drawcolumn39frommap () {
 
-%breakpoint
         to_screen = screen_backbuffer_base
 
         ; Drawing on 'other' screen, i.e. what VIC is not pointing at.
@@ -158,10 +165,14 @@ irq {
         }
 
     }
-
-    uridium_chars: %asmbinary "UridiumChars.bin"
-    uridium_map: %asmbinary "UridiumMap.bin"
-   
 }
+ 
+    uridium_chars $2000 {
+        %option force_output
+        %asmbinary "UridiumChars.bin"
+    }
 
-
+    uridium_map $5000 {
+        %option force_output
+        %asmbinary "UridiumMap.bin"
+    }
