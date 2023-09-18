@@ -20,11 +20,11 @@ main {
 
 
         sys.memset($2000, 8*256, 0)     ; clear charset data
-  
-        ubyte chaaa = 21
-        sys.memset($3800, 1000, chaaa)     ; TEST 
-        chaaa++
-        sys.memset($3c00, 1000, chaaa)     ; TEST
+        sys.memcopy(uridium_chars, $2000, 8*256) 
+        ;ubyte chaaa = 21
+       ; sys.memset($3800, 1000, chaaa)     ; TEST 
+        ;chaaa++
+        ;sys.memset($3c00, 1000, chaaa)     ; TEST
 
 
        ; c64.SCROLX &= %11110111     ; 38 column mode
