@@ -36,7 +36,7 @@ main {
 
        ; c64.SCROLX &= %11110111     ; 38 column mode
 
-        sys.set_rasterirq(&irq.irqhandler, 255, false)
+        sys.set_rasterirq(&irq.irqhandler, 245, true)
 
         ;fill_screen($3000, 0 as ubyte)
 
@@ -96,6 +96,7 @@ irq {
         }
               
         offset = startline * 40
+      
         row = 0
         while row < numlines {
             sys.memcopy(from_screen + 1 + offset, to_screen + offset, 39)
@@ -105,11 +106,15 @@ irq {
 
     }
 
+    sub set_smoothscroll_position() {
+        c64.SCROLX = c64.SCROLX & %11111000 | scroll        ; Setting 3 lsbs'        
+    }
+
     sub swap_screens() {
 
         drawcolumn39frommap()
         scroll = 7
-        c64.SCROLX = c64.SCROLX & %11111000 | scroll        ; Setting 3 lsbs'
+        set_smoothscroll_position()
 
         ;current_screen = (current_screen + 1) & 1
         current_screen = not current_screen
@@ -148,8 +153,8 @@ irq {
             return
         }
 
-        c64.SCROLX = c64.SCROLX & %11111000 | scroll        ; Setting 3 lsbs'
-
+        set_smoothscroll_position()
+        
         if scroll == 4 {
             startline = 4
             numlines = 8
