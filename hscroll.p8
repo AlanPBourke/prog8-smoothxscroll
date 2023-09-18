@@ -12,8 +12,6 @@ main {
 
     sub start() {
 
-        uword charset_base = &uridium_chars
-
         ;sys.set_irqd()
 
         ; Screen at $3800
@@ -23,6 +21,7 @@ main {
         c64.VMCSB = c64.VMCSB & %11110001 | %00001000
 
         ; Multicolour text mode
+        c64.SCROLX = %00010000
         @($d021) = 0
         @($d022) = 1
         @($d023) = 7
@@ -61,7 +60,7 @@ irq {
     uword from_screen = 0
     uword to_screen = 0
   
-    byte scroll = 7
+    ubyte scroll = 7
     ubyte startline = 0
     ubyte numlines = 0
     ubyte row = 0
@@ -87,8 +86,6 @@ irq {
 
     sub copy_and_shift() {
 
-
-
         if current_screen == 0 {
             from_screen = screen_base
             to_screen = screen_backbuffer_base
@@ -112,8 +109,11 @@ irq {
 
         drawcolumn39frommap()
         scroll = 7
-        c64.SCROLX &= scroll 
-        current_screen = (current_screen + 1) & 1
+        c64.SCROLX = c64.SCROLX & %11111000 | scroll        ; Setting 3 lsbs'
+
+        ;current_screen = (current_screen + 1) & 1
+        current_screen = not current_screen
+
         setscreenlocation()
 
     }
@@ -136,29 +136,27 @@ irq {
             map_base += map_width
         }
 
-
     }
 
     sub irqhandler() {
 
+;%breakpoint   
         scroll -= 1
 
-        if scroll<0 {
+        if scroll == 0 {
             swap_screens()
             return
         }
 
-        c64.SCROLX &= scroll        ; Setting 3 lsbs'
- 
-        if scroll == 4 {
+        c64.SCROLX = c64.SCROLX & %11111000 | scroll        ; Setting 3 lsbs'
 
+        if scroll == 4 {
             startline = 4
             numlines = 8
             copy_and_shift();
         }
 
         if scroll == 2 {
-
             startline = 12
             numlines = 9
             copy_and_shift();

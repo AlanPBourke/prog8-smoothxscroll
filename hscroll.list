@@ -1,7 +1,7 @@
 
 ; 64tass Turbo Assembler Macro V1.59.3120 listing file
 ; 64tass --ascii --case-sensitive --long-branch -Wall --dump-labels --vice-labels --labels=hscroll.vice-mon-list --no-monitor -Wno-shadow --list=hscroll.list --cbm-prg --output hscroll.prg hscroll.asm
-; Mon Sep 18 13:51:24 2023
+; Mon Sep 18 17:28:44 2023
 
 ;Offset	;Hex		;Source
 
@@ -16,22 +16,22 @@
 >0809	37 31 20 3a 8f 20 50 52 4f 47 38 00
 >0815	00 00		+	.word  0
 .0817			prog8_entrypoint
-.0817	20 8d 73		jsr  sys.init_system
-.081a	20 b6 73		jsr  sys.init_system_phase2
+.0817	20 96 73		jsr  sys.init_system
+.081a	20 bf 73		jsr  sys.init_system_phase2
 .081d	a9 74			lda  #>sys.reset_system
 .081f	48			pha
-.0820	a9 b5			lda  #<sys.reset_system
+.0820	a9 be			lda  #<sys.reset_system
 .0822	48			pha
 .0823	20 2d 08		jsr  p8_main.p8_start
 .0826	a9 1f			lda  #31
 .0828	85 01			sta  $01
-.082a	4c b7 73		jmp  sys.cleanup_at_exit
+.082a	4c c0 73		jmp  sys.cleanup_at_exit
 .082d			p8_main
 .082d			p8_start
 .082d	d8			cld
 .082e	ba			tsx
-.082f	8e 15 75		stx  prog8_lib.orig_stackpointer    ; required for sys.exit()
-.0832	20 58 73		jsr  p8_irq.prog8_init_vars
+.082f	8e 1e 75		stx  prog8_lib.orig_stackpointer    ; required for sys.exit()
+.0832	20 61 73		jsr  p8_irq.prog8_init_vars
 .0835			+
 .0835	b8			clv
 .0836	18			clc
@@ -43,23 +43,25 @@
 .0844	29 f1			and  #$f1
 .0846	09 08			ora  #8
 .0848	8d 18 d0		sta  c64.VMCSB
-.084b	a9 00			lda  #0
-.084d	8d 21 d0		sta  $d021
-.0850	a9 01			lda  #1
-.0852	8d 22 d0		sta  $d022
-.0855	a9 07			lda  #7
-.0857	8d 23 d0		sta  $d023
-.085a	a9 ff			lda  #<$ff
-.085c	85 04			sta  cx16.r0
-.085e	a9 00			lda  #>$ff
-.0860	85 05			sta  cx16.r0+1
-.0862	a0 73			ldy  #>p8_irq.p8_irqhandler
-.0864	a9 24			lda  #<p8_irq.p8_irqhandler
-.0866	18			clc
-.0867	20 4e 74		jsr  sys.set_rasterirq
-.086a			p8_prog8_label_1_repeat
-.086a	4c 6a 08		jmp  p8_prog8_label_1_repeat
-.086d	60			rts
+.084b	a9 10			lda  #$10
+.084d	8d 16 d0		sta  c64.SCROLX
+.0850	a9 00			lda  #0
+.0852	8d 21 d0		sta  $d021
+.0855	a9 01			lda  #1
+.0857	8d 22 d0		sta  $d022
+.085a	a9 07			lda  #7
+.085c	8d 23 d0		sta  $d023
+.085f	a9 ff			lda  #<$ff
+.0861	85 04			sta  cx16.r0
+.0863	a9 00			lda  #>$ff
+.0865	85 05			sta  cx16.r0+1
+.0867	a0 73			ldy  #>p8_irq.p8_irqhandler
+.0869	a9 2b			lda  #<p8_irq.p8_irqhandler
+.086b	18			clc
+.086c	20 57 74		jsr  sys.set_rasterirq
+.086f			p8_prog8_label_1_repeat
+.086f	4c 6f 08		jmp  p8_prog8_label_1_repeat
+.0872	60			rts
 .2000			p8_uridium_chars
 >2000	00 00 00 00		.binary "UridiumChars.bin"
 >2004	00 00 00 00 ff ff ff ff ff ff ff ff 15 15 15 15
@@ -603,7 +605,7 @@
 =64			p8_from_screen 	= 64 	; zp UWORD
 =66			p8_current_screen 	= 66 	; zp UBYTE
 =146			p8_startline 	= 146 	; zp UBYTE
-=150			p8_scroll 	= 150 	; zp BYTE
+=150			p8_scroll 	= 150 	; zp UBYTE
 =249			p8_row 	= 249 	; zp UBYTE
 =255			p8_numlines 	= 255 	; zp UBYTE
 =$2000				p8_char_base = $2000
@@ -650,7 +652,7 @@
 .7241	84 25			sty  p8_irq.p8_to_screen+1
 .7243			prog8_label_asm_4_if_end
 .7243	a5 92			lda  p8_irq.p8_startline
-.7245	20 06 75		jsr  math.mul_byte_40
+.7245	20 0f 75		jsr  math.mul_byte_40
 .7248	85 39			sta  p8_irq.p8_offset
 .724a	a9 00			lda  #0
 .724c	85 3a			sta  p8_irq.p8_offset+1
@@ -704,7 +706,7 @@
 .7290	68			pla
 .7291	a8			tay
 .7292	68			pla
-.7293	20 bd 74		jsr  sys.memcopy
+.7293	20 c6 74		jsr  sys.memcopy
 .7296	a5 39			lda  p8_irq.p8_offset
 .7298	18			clc
 .7299	69 28			adc  #40
@@ -717,134 +719,138 @@
 .72a6			p8_prog8_label_3_afterwhile
 .72a6	60			rts
 .72a7			p8_swap_screens
-.72a7	20 c2 72		jsr  p8_irq.p8_drawcolumn39frommap
+.72a7	20 c9 72		jsr  p8_irq.p8_drawcolumn39frommap
 .72aa	a9 07			lda  #7
 .72ac	85 96			sta  p8_irq.p8_scroll
 .72ae	ad 16 d0		lda  c64.SCROLX
-.72b1	25 96			and  p8_irq.p8_scroll
-.72b3	8d 16 d0		sta  c64.SCROLX
-.72b6	a5 42			lda  p8_irq.p8_current_screen
-.72b8	18			clc
-.72b9	69 01			adc  #1
-.72bb	29 01			and  #1
-.72bd	85 42			sta  p8_irq.p8_current_screen
-.72bf	4c 00 72		jmp  p8_irq.p8_setscreenlocation
-.72c2			p8_drawcolumn39frommap
-.72c2	a9 00			lda  #<$3c00
-.72c4	a0 3c			ldy  #>$3c00
-.72c6	85 24			sta  p8_irq.p8_to_screen
-.72c8	84 25			sty  p8_irq.p8_to_screen+1
-.72ca	a5 42			lda  p8_irq.p8_current_screen
-.72cc	c9 01			cmp  #1
-.72ce	d0 08			bne  prog8_label_asm_5_if_end
-.72d0	a9 00			lda  #<$3800
-.72d2	a0 38			ldy  #>$3800
-.72d4	85 24			sta  p8_irq.p8_to_screen
-.72d6	84 25			sty  p8_irq.p8_to_screen+1
-.72d8			prog8_label_asm_5_if_end
-.72d8	a9 a0			lda  #<$a0
-.72da	a0 00			ldy  #>$a0
-.72dc	85 39			sta  p8_irq.p8_offset
-.72de	84 3a			sty  p8_irq.p8_offset+1
-.72e0	a5 3d			lda  p8_irq.p8_map_base
-.72e2	18			clc
-.72e3	65 3b			adc  p8_irq.p8_map_column
-.72e5	85 3d			sta  p8_irq.p8_map_base
-.72e7	a5 3e			lda  p8_irq.p8_map_base+1
-.72e9	65 3c			adc  p8_irq.p8_map_column+1
-.72eb	85 3e			sta  p8_irq.p8_map_base+1
-.72ed	a9 00			lda  #0
-.72ef	85 3f			sta  p8_irq.p8_i
-.72f1			prog8_label_asm_6_for_loop
-.72f1	a0 00			ldy  #0
-.72f3	b1 3d			lda  (p8_irq.p8_map_base),y
-.72f5	48			pha
-.72f6	a4 25			ldy  p8_irq.p8_to_screen+1
-.72f8	a5 24			lda  p8_irq.p8_to_screen
-.72fa	18			clc
-.72fb	65 39			adc  p8_irq.p8_offset
-.72fd	aa			tax
-.72fe	98			tya
-.72ff	65 3a			adc  p8_irq.p8_offset+1
-.7301	a8			tay
-.7302	8a			txa
-.7303	85 fd			sta  P8ZP_SCRATCH_W2
-.7305	84 fe			sty  P8ZP_SCRATCH_W2+1
-.7307	a0 27			ldy  #$27
-.7309	68			pla
-.730a	91 fd			sta  (P8ZP_SCRATCH_W2),y
-.730c	a5 39			lda  p8_irq.p8_offset
-.730e	18			clc
-.730f	69 28			adc  #40
-.7311	85 39			sta  p8_irq.p8_offset
-.7313	90 02			bcc  +
-.7315	e6 3a			inc  p8_irq.p8_offset+1
-.7317			+
-.7317	e6 3e			inc  p8_irq.p8_map_base+1
-.7319	e6 3e			inc  p8_irq.p8_map_base+1
-.731b	e6 3f			inc  p8_irq.p8_i
-.731d	a5 3f			lda  p8_irq.p8_i
-.731f	c9 12			cmp  #18
-.7321	d0 ce			bne  prog8_label_asm_6_for_loop
-.7323			prog8_label_asm_7_for_end
-.7323	60			rts
-.7324			p8_irqhandler
-.7324	c6 96			dec  p8_irq.p8_scroll
-.7326	a5 96			lda  p8_irq.p8_scroll
-.7328	10 03			bpl  prog8_label_asm_8_if_end
-.732a	4c a7 72		jmp  p8_irq.p8_swap_screens
-.732d			prog8_label_asm_8_if_end
-.732d	ad 16 d0		lda  c64.SCROLX
-.7330	25 96			and  p8_irq.p8_scroll
-.7332	8d 16 d0		sta  c64.SCROLX
-.7335	a5 96			lda  p8_irq.p8_scroll
-.7337	c9 04			cmp  #4
-.7339	d0 0b			bne  prog8_label_asm_9_if_end
-.733b	a9 04			lda  #4
-.733d	85 92			sta  p8_irq.p8_startline
-.733f	a9 08			lda  #8
-.7341	85 ff			sta  p8_irq.p8_numlines
-.7343	20 1c 72		jsr  p8_irq.p8_copy_and_shift
-.7346			prog8_label_asm_9_if_end
-.7346	a5 96			lda  p8_irq.p8_scroll
-.7348	c9 02			cmp  #2
-.734a	d0 0b			bne  prog8_label_asm_10_if_end
-.734c	a9 0c			lda  #12
-.734e	85 92			sta  p8_irq.p8_startline
-.7350	a9 09			lda  #9
-.7352	85 ff			sta  p8_irq.p8_numlines
-.7354	20 1c 72		jsr  p8_irq.p8_copy_and_shift
-.7357			prog8_label_asm_10_if_end
-.7357	60			rts
-.7358			prog8_init_vars
-.7358	a9 00			lda  #0
-.735a	85 42			sta  p8_irq.p8_current_screen
-.735c	85 40			sta  p8_irq.p8_from_screen
-.735e	85 41			sta  p8_irq.p8_from_screen+1
-.7360	a9 00			lda  #0
-.7362	85 24			sta  p8_irq.p8_to_screen
-.7364	85 25			sta  p8_irq.p8_to_screen+1
-.7366	a9 07			lda  #7
-.7368	85 96			sta  p8_irq.p8_scroll
-.736a	a9 00			lda  #0
-.736c	85 92			sta  p8_irq.p8_startline
-.736e	85 ff			sta  p8_irq.p8_numlines
-.7370	85 f9			sta  p8_irq.p8_row
-.7372	a9 01			lda  #1
-.7374	85 3f			sta  p8_irq.p8_i
-.7376	a9 01			lda  #<1
-.7378	a0 00			ldy  #>1
-.737a	85 3b			sta  p8_irq.p8_map_column
-.737c	84 3c			sty  p8_irq.p8_map_column+1
-.737e	a9 00			lda  #0
-.7380	85 39			sta  p8_irq.p8_offset
-.7382	85 3a			sta  p8_irq.p8_offset+1
-.7384	a9 00			lda  #<p8_uridium_map
-.7386	a0 50			ldy  #>p8_uridium_map
-.7388	85 3d			sta  p8_irq.p8_map_base
-.738a	84 3e			sty  p8_irq.p8_map_base+1
-.738c	60			rts
-.738d			cbm
+.72b1	29 f8			and  #$f8
+.72b3	05 96			ora  p8_irq.p8_scroll
+.72b5	8d 16 d0		sta  c64.SCROLX
+.72b8	a5 42			lda  p8_irq.p8_current_screen
+.72ba	c9 00			cmp  #0
+.72bc	f0 04			beq  +
+.72be	a9 00			lda  #0
+.72c0	f0 02			beq  ++
+.72c2	a9 01		+                   lda  #1
+.72c4	85 42		+                   sta  p8_irq.p8_current_screen
+.72c6	4c 00 72		jmp  p8_irq.p8_setscreenlocation
+.72c9			p8_drawcolumn39frommap
+.72c9	a9 00			lda  #<$3c00
+.72cb	a0 3c			ldy  #>$3c00
+.72cd	85 24			sta  p8_irq.p8_to_screen
+.72cf	84 25			sty  p8_irq.p8_to_screen+1
+.72d1	a5 42			lda  p8_irq.p8_current_screen
+.72d3	c9 01			cmp  #1
+.72d5	d0 08			bne  prog8_label_asm_5_if_end
+.72d7	a9 00			lda  #<$3800
+.72d9	a0 38			ldy  #>$3800
+.72db	85 24			sta  p8_irq.p8_to_screen
+.72dd	84 25			sty  p8_irq.p8_to_screen+1
+.72df			prog8_label_asm_5_if_end
+.72df	a9 a0			lda  #<$a0
+.72e1	a0 00			ldy  #>$a0
+.72e3	85 39			sta  p8_irq.p8_offset
+.72e5	84 3a			sty  p8_irq.p8_offset+1
+.72e7	a5 3d			lda  p8_irq.p8_map_base
+.72e9	18			clc
+.72ea	65 3b			adc  p8_irq.p8_map_column
+.72ec	85 3d			sta  p8_irq.p8_map_base
+.72ee	a5 3e			lda  p8_irq.p8_map_base+1
+.72f0	65 3c			adc  p8_irq.p8_map_column+1
+.72f2	85 3e			sta  p8_irq.p8_map_base+1
+.72f4	a9 00			lda  #0
+.72f6	85 3f			sta  p8_irq.p8_i
+.72f8			prog8_label_asm_6_for_loop
+.72f8	a0 00			ldy  #0
+.72fa	b1 3d			lda  (p8_irq.p8_map_base),y
+.72fc	48			pha
+.72fd	a4 25			ldy  p8_irq.p8_to_screen+1
+.72ff	a5 24			lda  p8_irq.p8_to_screen
+.7301	18			clc
+.7302	65 39			adc  p8_irq.p8_offset
+.7304	aa			tax
+.7305	98			tya
+.7306	65 3a			adc  p8_irq.p8_offset+1
+.7308	a8			tay
+.7309	8a			txa
+.730a	85 fd			sta  P8ZP_SCRATCH_W2
+.730c	84 fe			sty  P8ZP_SCRATCH_W2+1
+.730e	a0 27			ldy  #$27
+.7310	68			pla
+.7311	91 fd			sta  (P8ZP_SCRATCH_W2),y
+.7313	a5 39			lda  p8_irq.p8_offset
+.7315	18			clc
+.7316	69 28			adc  #40
+.7318	85 39			sta  p8_irq.p8_offset
+.731a	90 02			bcc  +
+.731c	e6 3a			inc  p8_irq.p8_offset+1
+.731e			+
+.731e	e6 3e			inc  p8_irq.p8_map_base+1
+.7320	e6 3e			inc  p8_irq.p8_map_base+1
+.7322	e6 3f			inc  p8_irq.p8_i
+.7324	a5 3f			lda  p8_irq.p8_i
+.7326	c9 12			cmp  #18
+.7328	d0 ce			bne  prog8_label_asm_6_for_loop
+.732a			prog8_label_asm_7_for_end
+.732a	60			rts
+.732b			p8_irqhandler
+.732b	c6 96			dec  p8_irq.p8_scroll
+.732d	a5 96			lda  p8_irq.p8_scroll
+.732f	d0 03			bne  prog8_label_asm_8_if_end
+.7331	4c a7 72		jmp  p8_irq.p8_swap_screens
+.7334			prog8_label_asm_8_if_end
+.7334	ad 16 d0		lda  c64.SCROLX
+.7337	29 f8			and  #$f8
+.7339	05 96			ora  p8_irq.p8_scroll
+.733b	8d 16 d0		sta  c64.SCROLX
+.733e	a5 96			lda  p8_irq.p8_scroll
+.7340	c9 04			cmp  #4
+.7342	d0 0b			bne  prog8_label_asm_9_if_end
+.7344	a9 04			lda  #4
+.7346	85 92			sta  p8_irq.p8_startline
+.7348	a9 08			lda  #8
+.734a	85 ff			sta  p8_irq.p8_numlines
+.734c	20 1c 72		jsr  p8_irq.p8_copy_and_shift
+.734f			prog8_label_asm_9_if_end
+.734f	a5 96			lda  p8_irq.p8_scroll
+.7351	c9 02			cmp  #2
+.7353	d0 0b			bne  prog8_label_asm_10_if_end
+.7355	a9 0c			lda  #12
+.7357	85 92			sta  p8_irq.p8_startline
+.7359	a9 09			lda  #9
+.735b	85 ff			sta  p8_irq.p8_numlines
+.735d	20 1c 72		jsr  p8_irq.p8_copy_and_shift
+.7360			prog8_label_asm_10_if_end
+.7360	60			rts
+.7361			prog8_init_vars
+.7361	a9 00			lda  #0
+.7363	85 42			sta  p8_irq.p8_current_screen
+.7365	85 40			sta  p8_irq.p8_from_screen
+.7367	85 41			sta  p8_irq.p8_from_screen+1
+.7369	a9 00			lda  #0
+.736b	85 24			sta  p8_irq.p8_to_screen
+.736d	85 25			sta  p8_irq.p8_to_screen+1
+.736f	a9 07			lda  #7
+.7371	85 96			sta  p8_irq.p8_scroll
+.7373	a9 00			lda  #0
+.7375	85 92			sta  p8_irq.p8_startline
+.7377	85 ff			sta  p8_irq.p8_numlines
+.7379	85 f9			sta  p8_irq.p8_row
+.737b	a9 01			lda  #1
+.737d	85 3f			sta  p8_irq.p8_i
+.737f	a9 01			lda  #<1
+.7381	a0 00			ldy  #>1
+.7383	85 3b			sta  p8_irq.p8_map_column
+.7385	84 3c			sty  p8_irq.p8_map_column+1
+.7387	a9 00			lda  #0
+.7389	85 39			sta  p8_irq.p8_offset
+.738b	85 3a			sta  p8_irq.p8_offset+1
+.738d	a9 00			lda  #<p8_uridium_map
+.738f	a0 50			ldy  #>p8_uridium_map
+.7391	85 3d			sta  p8_irq.p8_map_base
+.7393	84 3e			sty  p8_irq.p8_map_base+1
+.7395	60			rts
+.7396			cbm
 =$90				STATUS = $90
 =$91				STKEY = $91
 =$a0				TIME_HI = $a0
@@ -930,7 +936,7 @@
 =$ffed				SCREEN = $ffed
 =$fff0				PLOT = $fff0
 =$fff3				IOBASE = $fff3
-.738d			c64
+.7396			c64
 =$07f8				SPRPTR0 = $07f8
 =$07f8				SPRPTR = $07f8
 =$07f9				SPRPTR1 = $07f9
@@ -1058,207 +1064,207 @@
 =$dd0d				CIA2ICR = $dd0d
 =$dd0e				CIA2CRA = $dd0e
 =$dd0f				CIA2CRB = $dd0f
-.738d			sys
+.7396			sys
 =$40				target = $40
-.738d			init_system
-.738d	78		        sei
-.738e	d8		        cld
-.738f	a9 2f		        lda  #%00101111
-.7391	85 00		        sta  $00
-.7393	a9 27		        lda  #%00100111
-.7395	85 01		        sta  $01
-.7397	20 84 ff	        jsr  cbm.IOINIT
-.739a	20 8a ff	        jsr  cbm.RESTOR
-.739d	20 81 ff	        jsr  cbm.CINT
-.73a0	a9 06		        lda  #6
-.73a2	8d 20 d0	        sta  c64.EXTCOL
-.73a5	a9 07		        lda  #7
-.73a7	8d 86 02	        sta  cbm.COLOR
-.73aa	a9 00		        lda  #0
-.73ac	8d 21 d0	        sta  c64.BGCOL0
-.73af	20 ba 73	        jsr  disable_runstop_and_charsetswitch
-.73b2	18		        clc
-.73b3	b8		        clv
-.73b4	58		        cli
-.73b5	60		        rts
-.73b6			init_system_phase2
-.73b6	60		        rts     ; no phase 2 steps on the C64
-.73b7			cleanup_at_exit
-.73b7	4c c5 73	        jmp  sys.enable_runstop_and_charsetswitch
-.73ba			disable_runstop_and_charsetswitch
-.73ba	a9 80		        lda  #$80
-.73bc	8d 91 02	        sta  657    ; disable charset switching
-.73bf	a9 ef		        lda  #239
-.73c1	8d 28 03	        sta  808    ; disable run/stop key
-.73c4	60		        rts
-.73c5			enable_runstop_and_charsetswitch
-.73c5	a9 00		        lda  #0
-.73c7	8d 91 02	        sta  657    ; enable charset switching
-.73ca	a9 ed		        lda  #237
-.73cc	8d 28 03	        sta  808    ; enable run/stop key
-.73cf	60		        rts
-.73d0			set_irq
-.73d0	8d ed 73		        sta  _modified+1
-.73d3	8c ee 73		        sty  _modified+2
-.73d6	a9 00			        lda  #0
-.73d8	2a			        rol  a
-.73d9	8d 08 74		        sta  _use_kernal
-.73dc	78				sei
-.73dd	a9 e9				lda  #<_irq_handler
-.73df	8d 14 03			sta  cbm.CINV
-.73e2	a9 73				lda  #>_irq_handler
-.73e4	8d 15 03			sta  cbm.CINV+1
-.73e7	58				cli
-.73e8	60				rts
-.73e9	20 09 74	_irq_handler    jsr  _irq_handler_init
-.73ec	20 ff ff	_modified	jsr  $ffff                      ; modified
-.73ef	20 29 74			jsr  _irq_handler_end
-.73f2	ad 08 74			lda  _use_kernal
-.73f5	d0 0e				bne  +
-.73f7	a9 ff				lda  #$ff
-.73f9	8d 19 d0			sta  c64.VICIRQ			; acknowledge raster irq
-.73fc	ad 0d dc			lda  c64.CIA1ICR		; acknowledge CIA1 interrupt
-.73ff	68				pla
-.7400	a8				tay
-.7401	68				pla
-.7402	aa				tax
-.7403	68				pla
-.7404	40				rti
-.7405	4c 31 ea	+		jmp  cbm.IRQDFRT		; continue with normal kernal irq routine
->7408	00		_use_kernal     .byte  0
-.7409			_irq_handler_init
-.7409	a5 02				lda  P8ZP_SCRATCH_B1
-.740b	8d 48 74			sta  IRQ_SCRATCH_ZPB1
-.740e	a5 03				lda  P8ZP_SCRATCH_REG
-.7410	8d 49 74			sta  IRQ_SCRATCH_ZPREG
-.7413	a5 fb				lda  P8ZP_SCRATCH_W1
-.7415	8d 4a 74			sta  IRQ_SCRATCH_ZPWORD1
-.7418	a5 fc				lda  P8ZP_SCRATCH_W1+1
-.741a	8d 4b 74			sta  IRQ_SCRATCH_ZPWORD1+1
-.741d	a5 fd				lda  P8ZP_SCRATCH_W2
-.741f	8d 4c 74			sta  IRQ_SCRATCH_ZPWORD2
-.7422	a5 fe				lda  P8ZP_SCRATCH_W2+1
-.7424	8d 4d 74			sta  IRQ_SCRATCH_ZPWORD2+1
-.7427	d8				cld
-.7428	60				rts
-.7429			_irq_handler_end
-.7429	ad 48 74			lda  IRQ_SCRATCH_ZPB1
-.742c	85 02				sta  P8ZP_SCRATCH_B1
-.742e	ad 49 74			lda  IRQ_SCRATCH_ZPREG
-.7431	85 03				sta  P8ZP_SCRATCH_REG
-.7433	ad 4a 74			lda  IRQ_SCRATCH_ZPWORD1
-.7436	85 fb				sta  P8ZP_SCRATCH_W1
-.7438	ad 4b 74			lda  IRQ_SCRATCH_ZPWORD1+1
-.743b	85 fc				sta  P8ZP_SCRATCH_W1+1
-.743d	ad 4c 74			lda  IRQ_SCRATCH_ZPWORD2
-.7440	85 fd				sta  P8ZP_SCRATCH_W2
-.7442	ad 4d 74			lda  IRQ_SCRATCH_ZPWORD2+1
-.7445	85 fe				sta  P8ZP_SCRATCH_W2+1
-.7447	60				rts
->7448	00		IRQ_SCRATCH_ZPB1	.byte  0
->7449	00		IRQ_SCRATCH_ZPREG	.byte  0
->744a	00 00		IRQ_SCRATCH_ZPWORD1	.word  0
->744c	00 00		IRQ_SCRATCH_ZPWORD2	.word  0
-.744e			set_rasterirq
-.744e	8d 72 74		        sta  _modified+1
-.7451	8c 73 74		        sty  _modified+2
-.7454	a9 00			        lda  #0
-.7456	2a			        rol  a
-.7457	8d 08 74		        sta  set_irq._use_kernal
-.745a	a5 04				lda  cx16.r0
-.745c	a4 05				ldy  cx16.r0+1
-.745e	78				sei
-.745f	20 8a 74			jsr  _setup_raster_irq
-.7462	a9 6e				lda  #<_raster_irq_handler
-.7464	8d 14 03			sta  cbm.CINV
-.7467	a9 74				lda  #>_raster_irq_handler
-.7469	8d 15 03			sta  cbm.CINV+1
-.746c	58				cli
-.746d	60				rts
-.746e			_raster_irq_handler
-.746e	20 09 74			jsr  set_irq._irq_handler_init
-.7471	20 ff ff	_modified	jsr  $ffff              ; modified
-.7474	20 29 74			jsr  set_irq._irq_handler_end
-.7477	a9 ff		        lda  #$ff
-.7479	8d 19 d0	        sta  c64.VICIRQ			; acknowledge raster irq
-.747c	ad 08 74			lda  set_irq._use_kernal
-.747f	d0 06				bne  +
-.7481	68				pla
-.7482	a8				tay
-.7483	68				pla
-.7484	aa				tax
-.7485	68				pla
-.7486	40				rti
-.7487	4c 31 ea	+		jmp  cbm.IRQDFRT                ; continue with kernal irq routine
-.748a			_setup_raster_irq
-.748a	48				pha
-.748b	a9 7f				lda  #%01111111
-.748d	8d 0d dc			sta  c64.CIA1ICR    ; "switch off" interrupts signals from cia-1
-.7490	8d 0d dd			sta  c64.CIA2ICR    ; "switch off" interrupts signals from cia-2
-.7493	2d 11 d0			and  c64.SCROLY
-.7496	8d 11 d0			sta  c64.SCROLY     ; clear most significant bit of raster position
-.7499	ad 0d dc			lda  c64.CIA1ICR    ; ack previous irq
-.749c	ad 0d dd			lda  c64.CIA2ICR    ; ack previous irq
-.749f	68				pla
-.74a0	8d 12 d0			sta  c64.RASTER     ; set the raster line number where interrupt should occur
-.74a3	c0 00				cpy  #0
-.74a5	f0 08				beq  +
-.74a7	ad 11 d0			lda  c64.SCROLY
-.74aa	09 80				ora  #%10000000
-.74ac	8d 11 d0			sta  c64.SCROLY     ; set most significant bit of raster position
-.74af	a9 01		+		lda  #%00000001
-.74b1	8d 1a d0			sta  c64.IREQMASK   ;enable raster interrupt signals from vic
-.74b4	60				rts
-.74b5			reset_system
-.74b5	78		            sei
-.74b6	a9 0e		            lda  #14
-.74b8	85 01		            sta  $01        ; bank the kernal in
-.74ba	6c fc ff	            jmp  (cbm.RESET_VEC)
-.74bd			memcopy
-.74bd	a6 04		            ldx  cx16.r0
-.74bf	86 fb		            stx  P8ZP_SCRATCH_W1        ; source in ZP
-.74c1	a6 05		            ldx  cx16.r0+1
-.74c3	86 fc		            stx  P8ZP_SCRATCH_W1+1
-.74c5	a6 06		            ldx  cx16.r1
-.74c7	86 fd		            stx  P8ZP_SCRATCH_W2        ; target in ZP
-.74c9	a6 07		            ldx  cx16.r1+1
-.74cb	86 fe		            stx  P8ZP_SCRATCH_W2+1
-.74cd	c0 00		            cpy  #0
-.74cf	d0 1c		            bne  _longcopy
-.74d1	a8		            tay
-.74d2	d0 01		            bne  _copyshort
-.74d4	60		            rts     ; nothing to copy
-.74d5			_copyshort
-.74d5	a5 fb		            lda  P8ZP_SCRATCH_W1
-.74d7	d0 02		            bne  +
-.74d9	c6 fc		            dec  P8ZP_SCRATCH_W1+1
-.74db	c6 fb		+           dec  P8ZP_SCRATCH_W1
-.74dd	a5 fd		            lda  P8ZP_SCRATCH_W2
-.74df	d0 02		            bne  +
-.74e1	c6 fe		            dec  P8ZP_SCRATCH_W2+1
-.74e3	c6 fd		+           dec  P8ZP_SCRATCH_W2
-.74e5	b1 fb		-           lda  (P8ZP_SCRATCH_W1),y
-.74e7	91 fd		            sta  (P8ZP_SCRATCH_W2),y
-.74e9	88		            dey
-.74ea	d0 f9		            bne  -
-.74ec	60		            rts
-.74ed			_longcopy
-.74ed	85 02		            sta  P8ZP_SCRATCH_B1        ; lsb(count) = remainder in last page
-.74ef	98		            tya
-.74f0	aa		            tax                         ; x = num pages (1+)
-.74f1	a0 00		            ldy  #0
-.74f3	b1 fb		-           lda  (P8ZP_SCRATCH_W1),y
-.74f5	91 fd		            sta  (P8ZP_SCRATCH_W2),y
-.74f7	c8		            iny
-.74f8	d0 f9		            bne  -
-.74fa	e6 fc		            inc  P8ZP_SCRATCH_W1+1
-.74fc	e6 fe		            inc  P8ZP_SCRATCH_W2+1
-.74fe	ca		            dex
-.74ff	d0 f2		            bne  -
-.7501	a4 02		            ldy  P8ZP_SCRATCH_B1
-.7503	d0 d0		            bne  _copyshort
-.7505	60		            rts
-.7506			cx16
+.7396			init_system
+.7396	78		        sei
+.7397	d8		        cld
+.7398	a9 2f		        lda  #%00101111
+.739a	85 00		        sta  $00
+.739c	a9 27		        lda  #%00100111
+.739e	85 01		        sta  $01
+.73a0	20 84 ff	        jsr  cbm.IOINIT
+.73a3	20 8a ff	        jsr  cbm.RESTOR
+.73a6	20 81 ff	        jsr  cbm.CINT
+.73a9	a9 06		        lda  #6
+.73ab	8d 20 d0	        sta  c64.EXTCOL
+.73ae	a9 07		        lda  #7
+.73b0	8d 86 02	        sta  cbm.COLOR
+.73b3	a9 00		        lda  #0
+.73b5	8d 21 d0	        sta  c64.BGCOL0
+.73b8	20 c3 73	        jsr  disable_runstop_and_charsetswitch
+.73bb	18		        clc
+.73bc	b8		        clv
+.73bd	58		        cli
+.73be	60		        rts
+.73bf			init_system_phase2
+.73bf	60		        rts     ; no phase 2 steps on the C64
+.73c0			cleanup_at_exit
+.73c0	4c ce 73	        jmp  sys.enable_runstop_and_charsetswitch
+.73c3			disable_runstop_and_charsetswitch
+.73c3	a9 80		        lda  #$80
+.73c5	8d 91 02	        sta  657    ; disable charset switching
+.73c8	a9 ef		        lda  #239
+.73ca	8d 28 03	        sta  808    ; disable run/stop key
+.73cd	60		        rts
+.73ce			enable_runstop_and_charsetswitch
+.73ce	a9 00		        lda  #0
+.73d0	8d 91 02	        sta  657    ; enable charset switching
+.73d3	a9 ed		        lda  #237
+.73d5	8d 28 03	        sta  808    ; enable run/stop key
+.73d8	60		        rts
+.73d9			set_irq
+.73d9	8d f6 73		        sta  _modified+1
+.73dc	8c f7 73		        sty  _modified+2
+.73df	a9 00			        lda  #0
+.73e1	2a			        rol  a
+.73e2	8d 11 74		        sta  _use_kernal
+.73e5	78				sei
+.73e6	a9 f2				lda  #<_irq_handler
+.73e8	8d 14 03			sta  cbm.CINV
+.73eb	a9 73				lda  #>_irq_handler
+.73ed	8d 15 03			sta  cbm.CINV+1
+.73f0	58				cli
+.73f1	60				rts
+.73f2	20 12 74	_irq_handler    jsr  _irq_handler_init
+.73f5	20 ff ff	_modified	jsr  $ffff                      ; modified
+.73f8	20 32 74			jsr  _irq_handler_end
+.73fb	ad 11 74			lda  _use_kernal
+.73fe	d0 0e				bne  +
+.7400	a9 ff				lda  #$ff
+.7402	8d 19 d0			sta  c64.VICIRQ			; acknowledge raster irq
+.7405	ad 0d dc			lda  c64.CIA1ICR		; acknowledge CIA1 interrupt
+.7408	68				pla
+.7409	a8				tay
+.740a	68				pla
+.740b	aa				tax
+.740c	68				pla
+.740d	40				rti
+.740e	4c 31 ea	+		jmp  cbm.IRQDFRT		; continue with normal kernal irq routine
+>7411	00		_use_kernal     .byte  0
+.7412			_irq_handler_init
+.7412	a5 02				lda  P8ZP_SCRATCH_B1
+.7414	8d 51 74			sta  IRQ_SCRATCH_ZPB1
+.7417	a5 03				lda  P8ZP_SCRATCH_REG
+.7419	8d 52 74			sta  IRQ_SCRATCH_ZPREG
+.741c	a5 fb				lda  P8ZP_SCRATCH_W1
+.741e	8d 53 74			sta  IRQ_SCRATCH_ZPWORD1
+.7421	a5 fc				lda  P8ZP_SCRATCH_W1+1
+.7423	8d 54 74			sta  IRQ_SCRATCH_ZPWORD1+1
+.7426	a5 fd				lda  P8ZP_SCRATCH_W2
+.7428	8d 55 74			sta  IRQ_SCRATCH_ZPWORD2
+.742b	a5 fe				lda  P8ZP_SCRATCH_W2+1
+.742d	8d 56 74			sta  IRQ_SCRATCH_ZPWORD2+1
+.7430	d8				cld
+.7431	60				rts
+.7432			_irq_handler_end
+.7432	ad 51 74			lda  IRQ_SCRATCH_ZPB1
+.7435	85 02				sta  P8ZP_SCRATCH_B1
+.7437	ad 52 74			lda  IRQ_SCRATCH_ZPREG
+.743a	85 03				sta  P8ZP_SCRATCH_REG
+.743c	ad 53 74			lda  IRQ_SCRATCH_ZPWORD1
+.743f	85 fb				sta  P8ZP_SCRATCH_W1
+.7441	ad 54 74			lda  IRQ_SCRATCH_ZPWORD1+1
+.7444	85 fc				sta  P8ZP_SCRATCH_W1+1
+.7446	ad 55 74			lda  IRQ_SCRATCH_ZPWORD2
+.7449	85 fd				sta  P8ZP_SCRATCH_W2
+.744b	ad 56 74			lda  IRQ_SCRATCH_ZPWORD2+1
+.744e	85 fe				sta  P8ZP_SCRATCH_W2+1
+.7450	60				rts
+>7451	00		IRQ_SCRATCH_ZPB1	.byte  0
+>7452	00		IRQ_SCRATCH_ZPREG	.byte  0
+>7453	00 00		IRQ_SCRATCH_ZPWORD1	.word  0
+>7455	00 00		IRQ_SCRATCH_ZPWORD2	.word  0
+.7457			set_rasterirq
+.7457	8d 7b 74		        sta  _modified+1
+.745a	8c 7c 74		        sty  _modified+2
+.745d	a9 00			        lda  #0
+.745f	2a			        rol  a
+.7460	8d 11 74		        sta  set_irq._use_kernal
+.7463	a5 04				lda  cx16.r0
+.7465	a4 05				ldy  cx16.r0+1
+.7467	78				sei
+.7468	20 93 74			jsr  _setup_raster_irq
+.746b	a9 77				lda  #<_raster_irq_handler
+.746d	8d 14 03			sta  cbm.CINV
+.7470	a9 74				lda  #>_raster_irq_handler
+.7472	8d 15 03			sta  cbm.CINV+1
+.7475	58				cli
+.7476	60				rts
+.7477			_raster_irq_handler
+.7477	20 12 74			jsr  set_irq._irq_handler_init
+.747a	20 ff ff	_modified	jsr  $ffff              ; modified
+.747d	20 32 74			jsr  set_irq._irq_handler_end
+.7480	a9 ff		        lda  #$ff
+.7482	8d 19 d0	        sta  c64.VICIRQ			; acknowledge raster irq
+.7485	ad 11 74			lda  set_irq._use_kernal
+.7488	d0 06				bne  +
+.748a	68				pla
+.748b	a8				tay
+.748c	68				pla
+.748d	aa				tax
+.748e	68				pla
+.748f	40				rti
+.7490	4c 31 ea	+		jmp  cbm.IRQDFRT                ; continue with kernal irq routine
+.7493			_setup_raster_irq
+.7493	48				pha
+.7494	a9 7f				lda  #%01111111
+.7496	8d 0d dc			sta  c64.CIA1ICR    ; "switch off" interrupts signals from cia-1
+.7499	8d 0d dd			sta  c64.CIA2ICR    ; "switch off" interrupts signals from cia-2
+.749c	2d 11 d0			and  c64.SCROLY
+.749f	8d 11 d0			sta  c64.SCROLY     ; clear most significant bit of raster position
+.74a2	ad 0d dc			lda  c64.CIA1ICR    ; ack previous irq
+.74a5	ad 0d dd			lda  c64.CIA2ICR    ; ack previous irq
+.74a8	68				pla
+.74a9	8d 12 d0			sta  c64.RASTER     ; set the raster line number where interrupt should occur
+.74ac	c0 00				cpy  #0
+.74ae	f0 08				beq  +
+.74b0	ad 11 d0			lda  c64.SCROLY
+.74b3	09 80				ora  #%10000000
+.74b5	8d 11 d0			sta  c64.SCROLY     ; set most significant bit of raster position
+.74b8	a9 01		+		lda  #%00000001
+.74ba	8d 1a d0			sta  c64.IREQMASK   ;enable raster interrupt signals from vic
+.74bd	60				rts
+.74be			reset_system
+.74be	78		            sei
+.74bf	a9 0e		            lda  #14
+.74c1	85 01		            sta  $01        ; bank the kernal in
+.74c3	6c fc ff	            jmp  (cbm.RESET_VEC)
+.74c6			memcopy
+.74c6	a6 04		            ldx  cx16.r0
+.74c8	86 fb		            stx  P8ZP_SCRATCH_W1        ; source in ZP
+.74ca	a6 05		            ldx  cx16.r0+1
+.74cc	86 fc		            stx  P8ZP_SCRATCH_W1+1
+.74ce	a6 06		            ldx  cx16.r1
+.74d0	86 fd		            stx  P8ZP_SCRATCH_W2        ; target in ZP
+.74d2	a6 07		            ldx  cx16.r1+1
+.74d4	86 fe		            stx  P8ZP_SCRATCH_W2+1
+.74d6	c0 00		            cpy  #0
+.74d8	d0 1c		            bne  _longcopy
+.74da	a8		            tay
+.74db	d0 01		            bne  _copyshort
+.74dd	60		            rts     ; nothing to copy
+.74de			_copyshort
+.74de	a5 fb		            lda  P8ZP_SCRATCH_W1
+.74e0	d0 02		            bne  +
+.74e2	c6 fc		            dec  P8ZP_SCRATCH_W1+1
+.74e4	c6 fb		+           dec  P8ZP_SCRATCH_W1
+.74e6	a5 fd		            lda  P8ZP_SCRATCH_W2
+.74e8	d0 02		            bne  +
+.74ea	c6 fe		            dec  P8ZP_SCRATCH_W2+1
+.74ec	c6 fd		+           dec  P8ZP_SCRATCH_W2
+.74ee	b1 fb		-           lda  (P8ZP_SCRATCH_W1),y
+.74f0	91 fd		            sta  (P8ZP_SCRATCH_W2),y
+.74f2	88		            dey
+.74f3	d0 f9		            bne  -
+.74f5	60		            rts
+.74f6			_longcopy
+.74f6	85 02		            sta  P8ZP_SCRATCH_B1        ; lsb(count) = remainder in last page
+.74f8	98		            tya
+.74f9	aa		            tax                         ; x = num pages (1+)
+.74fa	a0 00		            ldy  #0
+.74fc	b1 fb		-           lda  (P8ZP_SCRATCH_W1),y
+.74fe	91 fd		            sta  (P8ZP_SCRATCH_W2),y
+.7500	c8		            iny
+.7501	d0 f9		            bne  -
+.7503	e6 fc		            inc  P8ZP_SCRATCH_W1+1
+.7505	e6 fe		            inc  P8ZP_SCRATCH_W2+1
+.7507	ca		            dex
+.7508	d0 f2		            bne  -
+.750a	a4 02		            ldy  P8ZP_SCRATCH_B1
+.750c	d0 d0		            bne  _copyshort
+.750e	60		            rts
+.750f			cx16
 =4				r0 = 4
 =4				r0s = 4
 =4				r0L = 4
@@ -1355,20 +1361,20 @@
 =$22				r15sL = $22
 =$23				r15H = $23
 =$23				r15sH = $23
-.7506			math
-=$7506			randbyte = randword    ; -- 8 bit pseudo random number generator into A (by just reusing randword)
-.7506			mul_byte_40
-.7506	29 07				and  #7
-.7508	a8				tay
-.7509	b9 0d 75			lda  _forties,y
-.750c	60				rts
->750d	00 28 50 78	_forties	.byte  0*40, 1*40, 2*40, 3*40, 4*40, 5*40, 6*40, 7*40 & 255
->7511	a0 c8 f0 18
-.7515			prog8_lib
->7515	00		orig_stackpointer	.byte  0	; stores the Stack pointer register at program start
+.750f			math
+=$750f			randbyte = randword    ; -- 8 bit pseudo random number generator into A (by just reusing randword)
+.750f			mul_byte_40
+.750f	29 07				and  #7
+.7511	a8				tay
+.7512	b9 16 75			lda  _forties,y
+.7515	60				rts
+>7516	00 28 50 78	_forties	.byte  0*40, 1*40, 2*40, 3*40, 4*40, 5*40, 6*40, 7*40 & 255
+>751a	a0 c8 f0 18
+.751e			prog8_lib
+>751e	00		orig_stackpointer	.byte  0	; stores the Stack pointer register at program start
 =1			PROG8_VARSHIGH_RAMBANK = 1
-.7516			prog8_bss_section_start
+.751f			prog8_bss_section_start
 =0			prog8_bss_section_size = * - prog8_bss_section_start
-.7516			prog8_program_end
+.751f			prog8_program_end
 
 ;******  End of listing
