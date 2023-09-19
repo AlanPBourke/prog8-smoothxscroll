@@ -2,3 +2,7 @@
 hscroll.vice-mon-list
 hscroll.prg
 hscroll.asm
+*.asm
+*.list
+*.prg
+*.vice-mon-list

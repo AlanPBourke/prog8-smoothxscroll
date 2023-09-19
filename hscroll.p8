@@ -179,12 +179,12 @@ irq {
     }
 }
  
-    uridium_chars $2000 {
-        %option force_output
-        %asmbinary "UridiumChars.bin"
-    }
+uridium_chars $2000 {
+    %option force_output
+    %asmbinary "UridiumChars.bin"
+}
 
-    uridium_map $5000 {
-        %option force_output
-        %asmbinary "UridiumMap.bin"
-    }
+uridium_map $5000 {
+    %option force_output
+    %asmbinary "UridiumMap.bin"
+}
