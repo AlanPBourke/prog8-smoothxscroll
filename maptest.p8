@@ -5,17 +5,17 @@ main {
    sub start() {
 
         sys.memset($0400, 40*25, 0)
-        ;sys.memset($d800, 40*25, 0)
-
+        sys.memset($d800, 40*25, $b1)
+        ;https://pastebin.com/tjPEr8Bq
         ; chars =  %xxxx100x -> charmem is at $2000
         c64.VMCSB = c64.VMCSB & %11110001 | %00001000
         
-        c64.SCROLX = %00010000
-        c64.EXTCOL = $f0  ; Border
-        c64.BGCOL0 = $f0  ; Screen
-        c64.BGCOL1 = $f7
-        c64.BGCOL2 = $f8
-        c64.BGCOL4 = $f3
+        c64.SCROLX = c64.SCROLX & %00001111 | %00010000
+        c64.EXTCOL = 0  ; Border
+        c64.BGCOL0 = 0  ; Screen
+        c64.BGCOL1 = 7
+        c64.BGCOL2 = 8
+        ;c64.BGCOL4 = $f3
 
 ;%breakpoint
         uword map_ptr = &uridium_map
