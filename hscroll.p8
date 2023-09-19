@@ -65,9 +65,10 @@ irq {
     ubyte numlines = 0
     ubyte row = 0
     ubyte i = 1
-    uword map_column = 1
+    uword map_column = 0
     uword offset = 0   
     uword map_base = &uridium_map
+    uword map_ptr = 0
 
     sub setscreenlocation() {
 
@@ -96,9 +97,9 @@ irq {
         }
               
         offset = startline * 40
-      
+
         row = 0
-        while row < numlines {
+        while row <= numlines {
             sys.memcopy(from_screen + 1 + offset, to_screen + offset, 39)
             offset += 40
             row++
@@ -133,20 +134,28 @@ irq {
         }
 
         offset = 4 * 40
-        map_base += map_column
+        to_screen += offset
+     
+        map_ptr = map_base + map_column
 
         for i in 0 to 17 {
-            @(to_screen + offset + 39) = @(map_base)
-            offset += 40
-            map_base += map_width
+            @(to_screen + 39) = @(map_base)
+            to_screen += 40
+            map_ptr += map_width
+        }
+
+        map_column++
+
+        if map_column == 254 {
+            map_column = 0
         }
 
     }
 
     sub irqhandler() {
 
-;%breakpoint   
         scroll -= 1
+
 
         if scroll == 0 {
             swap_screens()
