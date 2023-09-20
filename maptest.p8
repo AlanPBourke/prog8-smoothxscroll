@@ -4,18 +4,22 @@ main {
 
    sub start() {
 
-        sys.memset($0400, 40*25, 0)
-        sys.memset($d800, 40*25, $b1)
         ;https://pastebin.com/tjPEr8Bq
         ; chars =  %xxxx100x -> charmem is at $2000
         c64.VMCSB = c64.VMCSB & %11110001 | %00001000
-        
-        c64.SCROLX = c64.SCROLX & %00001111 | %00010000
+
+        @($d016) = @($d016) | %00010000         ; Multicolour text mode
+
+        sys.memset($0400, 40*25, 0)             ; Clear text screen at default location
+
+        sys.memset($d800, (25*40), %00001000)   ; Set multicolour mode bit for each colour RAM location
+                                                ; with black as the BG colour
+
         c64.EXTCOL = 0  ; Border
         c64.BGCOL0 = 0  ; Screen
         c64.BGCOL1 = 7
         c64.BGCOL2 = 8
-        ;c64.BGCOL4 = $f3
+        
 
 ;%breakpoint
         uword map_ptr = &uridium_map
