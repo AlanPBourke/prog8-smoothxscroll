@@ -1,5 +1,5 @@
 # prog8-hscroll
-Prog8 Horizontal Scroller
+Commodore 64 smooth horizontal scroller using the Prog8 language (https://prog8.readthedocs.io/en/latest/)
 
 This program does a right to left x-scroll using the standard double buffered approach.
 So two 1000 byte chunks of memory starting at $3800 and $3c00 are used for screen data and are drawn to and switched between accordingly.
