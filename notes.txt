@@ -1,0 +1,9 @@
+; https://bitwisecmd.com/
+; $D018  (c64.VMCSB see https://github.com/irmen/prog8/blob/master/compiler/res/prog8lib/c64/syslib.p8)
+; https://codebase64.org/doku.php?id=base:vicii_memory_organizing
+;https://www.pagetable.com/c64ref/c64mem/
+;https://codebase64.org/doku.php?id=base:built_in_screen_modes
+;%import syslib
+;%import textio
+
+; Note: VICE monitor io d000
