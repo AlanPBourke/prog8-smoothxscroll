@@ -54,7 +54,7 @@ irq {
     uword to_screen = 0
   
     ubyte scroll = 7
-    ubyte startline = 0
+    uword startline = 0
     ubyte numlines = 0
     ubyte row = 0
     ubyte i = 1
@@ -63,16 +63,20 @@ irq {
     uword screen_offset = 0   
     uword map_ptr = &uridium_map
     uword map_col = 0
+    ubyte map_char
+
     sub setscreenlocation() {
 
         if current_screen == 0 {
 
             ; screen = %1100xxxx -> screenmem is at $3800
+            ; screen_base
             c64.VMCSB = c64.VMCSB & %00001111 | %11100000
         
         }
         else {
             ; screen = %1100xxxx -> screenmem is at $3c00
+            ; screen_backbuffer_base
             c64.VMCSB = c64.VMCSB & %00001111 | %11110000            
         }
     }
@@ -119,7 +123,7 @@ irq {
 
     sub drawcolumn39frommap () {
 
-        ubyte cha
+        
         to_screen = screen_backbuffer_base
 
         ; Drawing on 'other' screen, i.e. what VIC is not pointing at.
@@ -131,16 +135,9 @@ irq {
 
         for row in 0 to 16 {
 
-            ; Draw screenful
-            ;for col in 0 to 39 {
-            ;    
-            ;    cha = @(map_ptr + map_offset + col)
-            ;    @($400 + offset + col) = cha
-            ;}
-
             map_offset = row * 512
-            cha = @(map_ptr + map_offset + map_col)
-            @(to_screen + screen_offset + 39) = cha
+            map_char = @(map_ptr + map_offset + map_col)
+            @(to_screen + screen_offset + 39) = map_char
 
             screen_offset += 40
             
@@ -156,7 +153,6 @@ irq {
     sub irqhandler() {
 
         scroll -= 1
-
 
         if scroll == 0 {
             swap_screens()
