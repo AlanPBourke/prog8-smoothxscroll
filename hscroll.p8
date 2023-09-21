@@ -20,25 +20,19 @@ main {
         ; chars =  %xxxx100x -> charmem is at $2000
         c64.VMCSB = c64.VMCSB & %11110001 | %00001000
 
-        ; Multicolour text mode
-        c64.SCROLX = %00010000
-        @($d021) = 0
-        @($d022) = 1
-        @($d023) = 7
-        ;sys.memset($2000, 8*256, 0)     ; clear charset data
-        
-        ;sys.memcopy(uridium_chars, $2000, 8*256) 
-        ;ubyte chaaa = 21
-       ; sys.memset($3800, 1000, chaaa)     ; TEST 
-        ;chaaa++
-        ;sys.memset($3c00, 1000, chaaa)     ; TEST
+        @($d016) = @($d016) | %00010000         ; Multicolour text mode (bit 4 = 1)
 
+        sys.memset($0400, 40*25, 0)             ; Clear text screen at default location
 
-       ; c64.SCROLX &= %11110111     ; 38 column mode
+        sys.memset($d800, (25*40), %00001000)   ; Set multicolour mode bit 3 for each colour RAM location
+                                                ; with black as the BG colour
+
+        c64.EXTCOL = 0  ; Border
+        c64.BGCOL0 = 0  ; Screen
+        c64.BGCOL1 = 7  ; Multicolour 1
+        c64.BGCOL2 = 8  ; Multicolour 2
 
         sys.set_rasterirq(&irq.irqhandler, 245, true)
-
-        ;fill_screen($3000, 0 as ubyte)
 
         repeat {}
 
@@ -56,7 +50,6 @@ irq {
     const ubyte map_height = 17
     const uword map_width = 512
     ubyte current_screen = 0;
-    ;uword map_ptr = &UridiumMap
     uword from_screen = 0
     uword to_screen = 0
   
@@ -65,11 +58,11 @@ irq {
     ubyte numlines = 0
     ubyte row = 0
     ubyte i = 1
-    uword map_column = 0
+    uword map_offset = 0
     uword offset = 0   
-    uword map_base = &uridium_map
-    uword map_ptr = 0
-
+    uword screen_offset = 0   
+    uword map_ptr = &uridium_map
+    uword map_col = 0
     sub setscreenlocation() {
 
         if current_screen == 0 {
@@ -126,6 +119,7 @@ irq {
 
     sub drawcolumn39frommap () {
 
+        ubyte cha
         to_screen = screen_backbuffer_base
 
         ; Drawing on 'other' screen, i.e. what VIC is not pointing at.
@@ -133,21 +127,28 @@ irq {
             to_screen = screen_base
         }
 
-        offset = 4 * 40
-        to_screen += offset
-     
-        map_ptr = map_base + map_column
+        screen_offset = 4 * 40
 
-        for i in 0 to 17 {
-            @(to_screen + 39) = @(map_base)
-            to_screen += 40
-            map_ptr += map_width
+        for row in 0 to 16 {
+
+            ; Draw screenful
+            ;for col in 0 to 39 {
+            ;    
+            ;    cha = @(map_ptr + map_offset + col)
+            ;    @($400 + offset + col) = cha
+            ;}
+
+            map_offset = row * 512
+            cha = @(map_ptr + map_offset + map_col)
+            @(to_screen + screen_offset + 39) = cha
+
+            screen_offset += 40
+            
         }
 
-        map_column++
-
-        if map_column == 254 {
-            map_column = 0
+        map_col++
+        if map_col == 512 {
+            map_col = 0
         }
 
     }
